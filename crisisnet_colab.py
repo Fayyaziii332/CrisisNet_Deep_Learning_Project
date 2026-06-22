@@ -95,7 +95,7 @@ for _d in [DATA_DIR, IMAGE_DIR,
            CKPT_DIR / "ssl", CKPT_DIR / "finetune",
            CKPT_DIR / "dann", CKPT_DIR / "baselines",
            RESULTS_DIR]:
-    _d.mkdir(parents=True, exist_ok=True)
+    
 
 # Platform-aware DataLoader settings.
 # Windows does not support fork-based multiprocessing; use num_workers=0.
