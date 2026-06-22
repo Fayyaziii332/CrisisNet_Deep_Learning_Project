@@ -569,6 +569,7 @@ The script uses the `Agg` backend by default (saves to file, no display required
 - **Compute**: Google Colaboratory (T4 GPU)
 - **Course**: Machine Learning & Deep Learning, University of Verona, A.Y. 2025–26
 - **Instructors**: Prof. Vittorio Murino, Prof. Cigdem Beyan, Dr. Giacomo Lucato
+- **Students**: Fayyaz Hussain Shah, Rafay Saif
 
 ---
 
