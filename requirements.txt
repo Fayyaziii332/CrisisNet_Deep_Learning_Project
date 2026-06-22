@@ -1,0 +1,38 @@
+# CrisisNet — Python dependencies
+# Install with:  pip install -r requirements.txt
+#
+# Python >= 3.10 required.
+# CUDA is optional but strongly recommended for training.
+# CPU-only training is very slow; use --small-batch on low-memory hardware.
+
+# ── Core deep learning ────────────────────────────────────────────────────────
+# PyTorch: install the right variant for your system at https://pytorch.org
+# Examples:
+#   CPU only:          pip install torch torchvision
+#   CUDA 12.1:         pip install torch torchvision --index-url https://download.pytorch.org/whl/cu121
+#   CUDA 11.8:         pip install torch torchvision --index-url https://download.pytorch.org/whl/cu118
+#   macOS (Apple MPS): pip install torch torchvision
+#
+# The line below installs the default (CPU or system CUDA) build.
+# Replace it with the CUDA-specific command above for GPU training.
+torch>=2.0.0
+torchvision>=0.15.0
+
+# ── NLP & datasets ────────────────────────────────────────────────────────────
+transformers==4.40.0          # BERT tokenizer and model
+datasets>=2.18.0              # HuggingFace datasets (CrisisMMD download)
+sentencepiece                 # Required by some tokenizers
+
+# ── Data & ML utilities ───────────────────────────────────────────────────────
+numpy>=1.26.4,<2.0            # Pinned: numpy 2.x breaks some torch ops
+pandas>=2.0.0
+scikit-learn>=1.4.0
+Pillow>=10.0.0                # Image loading
+
+# ── Visualisation ─────────────────────────────────────────────────────────────
+matplotlib>=3.8.0
+seaborn>=0.13.0
+
+# ── Progress & acceleration ───────────────────────────────────────────────────
+tqdm>=4.66.0
+accelerate>=0.27.0            # Optional but speeds up HuggingFace downloads
