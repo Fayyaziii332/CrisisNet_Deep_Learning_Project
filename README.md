@@ -15,6 +15,7 @@
 
 > **University of Verona** · Machine Learning & Deep Learning · A.Y. 2025–26  
 > *Prof. Vittorio Murino · Prof. Cigdem Beyan · Dr. Giacomo Lucato*
+> **Engineered By: Fayyaz Hussain Shah and Rafay Saif
 
 <br/>
 
@@ -85,7 +86,7 @@ All metrics are **macro-averaged** on the CrisisMMD v2.0 held-out test set.
 | 5 | **CrisisNet + SSL (Stage 2)** | 0.812 | 0.567 | 0.453 | 0.611 |
 | 6 | **CrisisNet + SSL + DANN (Stage 3)** | **0.834** | **0.589** | **0.487** | **0.637** |
 
-> ⚠️ Replace with your actual experimental values from `python train.py evaluate`.
+> ⚠️ Replace with your actual experimental values from `python crisisnet_colab.py evaluate`.
 
 ### Cross-Disaster Transfer (Leave-One-Event-Out)
 
@@ -152,7 +153,7 @@ Stage 3 ── DANN domain adaptation ──────────────
 CrisisMMD v2.0 downloads **automatically** — no manual steps required.
 
 ```bash
-python train.py download   # downloads ~1.8 GB, saves images locally
+python crisisnet_colab.py download   # downloads ~1.8 GB, saves images locally
 ```
 
 | Event | Samples | % |
@@ -203,7 +204,7 @@ pip install -r requirements.txt
 ### 3. Download the dataset
 
 ```bash
-python train.py download
+python crisisnet_colab.py download
 ```
 
 Downloads ~1.8 GB from HuggingFace. Images are cached — re-runs are instant.  
@@ -213,36 +214,36 @@ Creates `data/crisismmd/crisismmd_merged.csv` and `data/crisismmd/images/`.
 
 ```bash
 # Run all 3 stages sequentially (recommended first run)
-python train.py train --stage all
+python crisisnet_colab.py train --stage all
 
 # Or run stages individually
-python train.py train --stage ssl         # Stage 1: SSL pre-training
-python train.py train --stage finetune    # Stage 2: Multi-task fine-tuning
-python train.py train --stage dann        # Stage 3: Domain adaptation
-python train.py train --stage baselines   # 4 ablation baselines
+python crisisnet_colab.py train --stage ssl         # Stage 1: SSL pre-training
+python crisisnet_colab.py train --stage finetune    # Stage 2: Multi-task fine-tuning
+python crisisnet_colab.py train --stage dann        # Stage 3: Domain adaptation
+python crisisnet_colab.py train --stage baselines   # 4 ablation baselines
 
 # Start fresh (ignore existing checkpoints)
-python train.py train --stage all --no-resume
+python crisisnet_colab.py train --stage all --no-resume
 ```
 
 ### 5. Evaluate all 6 variants
 
 ```bash
-python train.py evaluate
+python crisisnet_colab.py evaluate
 
 # Show figures in a window instead of saving only (requires display)
-python train.py evaluate --show-plots
+python crisisnet_colab.py evaluate --show-plots
 ```
 
 ### 6. Predict on a single image
 
 ```bash
-python train.py predict \
+python crisisnet_colab.py predict \
     --image path/to/disaster_photo.jpg \
     --text "People stranded on rooftops, water rising fast #HurricaneHarvey"
 
 # Use a different checkpoint
-python train.py predict \
+python crisisnet_colab.py predict \
     --image photo.jpg \
     --text "tweet text" \
     --checkpoint checkpoints/finetune/crisisnet_best.pth
@@ -252,12 +253,12 @@ python train.py predict \
 
 ```bash
 # Low VRAM GPU (< 8 GB) or CPU — halves all batch sizes
-python train.py train --stage all --small-batch
+python crisisnet_colab.py train --stage all --small-batch
 
 # Override number of epochs
-python train.py train --stage ssl      --epochs-ssl 5
-python train.py train --stage finetune --epochs-finetune 10
-python train.py train --stage dann     --epochs-dann 8
+python crisisnet_colab.py train --stage ssl      --epochs-ssl 5
+python crisisnet_colab.py train --stage finetune --epochs-finetune 10
+python crisisnet_colab.py train --stage dann     --epochs-dann 8
 ```
 
 ---
@@ -284,58 +285,23 @@ Then run cells **top to bottom**. The notebook:
 crisisnet/
 │
 ├── 📓 CrisisNet_Colab.ipynb     # Colab notebook (train on free GPU)
-├── 🐍 train.py                  # Local CLI script (this file)
+├── 🐍 crisisnet_colab.py                # Local CLI script (this file)
 ├── 📋 requirements.txt          # Python dependencies
-├── 📝 CrisisNet_Report.docx     # Technical report
 ├── 📄 README.md                 # This file
-│
-├── data/                        # Created by: python train.py download
-│   └── crisismmd/
-│       ├── crisismmd_merged.csv # Merged annotations (all 3 tasks)
-│       └── images/              # ~18K crisis photos (~1.6 GB)
-│
-├── checkpoints/                 # Created automatically during training
-│   ├── ssl/
-│   │   ├── clip_latest.pth      # Saved every epoch (auto-resume)
-│   │   ├── clip_best.pth        # Saved when SSL loss improves
-│   │   └── history.json         # Loss per epoch
-│   ├── finetune/
-│   │   ├── crisisnet_latest.pth
-│   │   ├── crisisnet_best.pth   # Best avg F1 on validation set
-│   │   └── history.json
-│   ├── dann/
-│   │   ├── crisisnet_dann_latest.pth
-│   │   ├── crisisnet_dann_best.pth
-│   │   └── history.json
-│   └── baselines/
-│       ├── image_only_best.pth
-│       ├── text_only_best.pth
-│       ├── late_fusion_best.pth
-│       └── nossl_crisisnet_best.pth
-│
-└── results/                     # Created by: python train.py evaluate
-    ├── dataset_analysis.png
-    ├── ablation_summary.png
-    ├── cm_*.png                  # Confusion matrices (6 variants × 3 tasks)
-    ├── prf1_*.png                # Precision/Recall/F1 (6 variants × 3 tasks)
-    ├── multimodel_qualitative.png
-    ├── training_curves.png
-    ├── cross_disaster.png
-    └── attention_demo.png
 ```
 
 ### CLI command reference
 
 | Command | What it does |
 |---------|-------------|
-| `python train.py download` | Download CrisisMMD v2.0 from HuggingFace (~1.8 GB) |
-| `python train.py train --stage all` | Run SSL → finetune → DANN → baselines |
-| `python train.py train --stage ssl` | Stage 1 only |
-| `python train.py train --stage finetune` | Stage 2 only |
-| `python train.py train --stage dann` | Stage 3 only |
-| `python train.py train --stage baselines` | 4 ablation baselines only |
-| `python train.py evaluate` | Full evaluation — all 6 variants |
-| `python train.py predict --image X --text Y` | Single-image inference |
+| `python crisisnet_colab.py download` | Download CrisisMMD v2.0 from HuggingFace (~1.8 GB) |
+| `python crisisnet_colab.py train --stage all` | Run SSL → finetune → DANN → baselines |
+| `python crisisnet_colab.py train --stage ssl` | Stage 1 only |
+| `python crisisnet_colab.py train --stage finetune` | Stage 2 only |
+| `python crisisnet_colab.py train --stage dann` | Stage 3 only |
+| `python crisisnet_colab.py train --stage baselines` | 4 ablation baselines only |
+| `python crisisnet_colab.py evaluate` | Full evaluation — all 6 variants |
+| `python crisisnet_colab.py predict --image X --text Y` | Single-image inference |
 
 ### Useful flags
 
@@ -356,7 +322,7 @@ crisisnet/
 ### Stage 1 — SSL Pre-training (~90 min on T4)
 
 ```bash
-python train.py train --stage ssl
+python crisisnet_colab.py train --stage ssl
 ```
 
 CLIP-style InfoNCE contrastive pre-training on ~50K unlabeled crisis pairs.  
@@ -366,7 +332,7 @@ Both encoders are trained to align matched image-text pairs in a shared 512-d em
 ### Stage 2 — Multi-task Fine-tuning (~120 min on T4)
 
 ```bash
-python train.py train --stage finetune
+python crisisnet_colab.py train --stage finetune
 ```
 
 End-to-end training on labeled CrisisMMD data with:
@@ -378,7 +344,7 @@ End-to-end training on labeled CrisisMMD data with:
 ### Stage 3 — DANN Domain Adaptation (~60 min on T4)
 
 ```bash
-python train.py train --stage dann
+python crisisnet_colab.py train --stage dann
 ```
 
 Gradient Reversal Layer forces the encoder to learn disaster-invariant features.  
@@ -402,7 +368,7 @@ Checkpoints use **atomic writes** (temp file → rename) so a crash mid-write ne
 ## 🧪 Ablation Study
 
 ```bash
-python train.py train --stage baselines
+python crisisnet_colab.py train --stage baselines
 ```
 
 Trains 4 additional models for a clean 6-way comparison:
@@ -423,7 +389,7 @@ Each comparison between consecutive variants isolates exactly one design decisio
 ## 📈 Evaluation & Visualisation
 
 ```bash
-python train.py evaluate
+python crisisnet_colab.py evaluate
 ```
 
 Generates **14 figures** saved to `results/`:
@@ -476,7 +442,7 @@ pip install --force-reinstall "numpy>=1.26.4,<2.0"
 
 ### `ImportError: cannot import name 'autocast' from 'torch.cuda.amp'`
 
-`torch.cuda.amp` was removed in PyTorch 2.4+. The `train.py` script handles this automatically:
+`torch.cuda.amp` was removed in PyTorch 2.4+. The `crisisnet_colab.py` script handles this automatically:
 
 ```python
 try:
@@ -503,17 +469,17 @@ No action needed.
 Add `--small-batch` to halve all batch sizes:
 
 ```bash
-python train.py train --stage all --small-batch
+python crisisnet_colab.py train --stage all --small-batch
 ```
 
-If still OOM, reduce further by editing `cfg.ssl_bs`, `cfg.ft_bs`, `cfg.dann_bs` in the `Config` dataclass at the top of `train.py`.
+If still OOM, reduce further by editing `cfg.ssl_bs`, `cfg.ft_bs`, `cfg.dann_bs` in the `Config` dataclass at the top of `crisisnet_colab.py`.
 
 ### `FileNotFoundError: Dataset CSV not found`
 
 You need to download the dataset first:
 
 ```bash
-python train.py download
+python crisisnet_colab.py download
 ```
 
 ### `matplotlib` showing no window / display error on headless servers
